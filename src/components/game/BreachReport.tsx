@@ -44,100 +44,97 @@ export function BreachReport({ onReset, onClaimVictory }: BreachReportProps) {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 className={cn(
-                    "w-[95%] max-w-lg p-4 md:p-6 rounded-lg border-2 shadow-2xl font-mono overflow-hidden",
+                    "w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-xl border-2 shadow-2xl font-mono",
                     isVictory
-                        ? "bg-zinc-900/90 border-green-500/50 shadow-green-500/10"
-                        : "bg-zinc-900/90 border-red-500/50 shadow-red-500/10"
+                        ? "bg-zinc-900 border-green-500/50 shadow-green-500/10"
+                        : "bg-zinc-900 border-red-500/50 shadow-red-500/10"
                 )}
             >
-                {/* ... Header & Receipt Content same ... */}
+                {/* Scrollable Content Container */}
+                <div className="p-4 md:p-6">
+                    {/* ... Header & Receipt Content same ... */}
 
-                {/* Header */}
-                <div className="flex items-start justify-between mb-6 border-b border-zinc-800 pb-4">
-                    <div className="flex items-center gap-3">
-                        {isVictory ? (
-                            <div className="p-2 bg-green-500/10 rounded-full">
-                                <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-400" />
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-6 border-b border-zinc-800 pb-4">
+                        <div className="flex items-center gap-3">
+                            {isVictory ? (
+                                <div className="p-2 bg-green-500/10 rounded-full">
+                                    <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-400" />
+                                </div>
+                            ) : (
+                                <div className="p-2 bg-red-500/10 rounded-full">
+                                    <XCircle className="w-6 h-6 md:w-8 md:h-8 text-red-500" />
+                                </div>
+                            )}
+                            <div>
+                                <h2 className={cn(
+                                    "text-lg md:text-xl font-bold tracking-wider",
+                                    isVictory ? "text-green-400" : "text-red-500"
+                                )}>
+                                    {isVictory ? "BREACH SUCCESSFUL" : "CONNECTION LOST"}
+                                </h2>
+                                <p className="text-zinc-500 text-xs">
+                                    {isVictory ? "PAYLOAD DELIVERED" : "SIGNAL INTERRUPTED"}
+                                </p>
                             </div>
-                        ) : (
-                            <div className="p-2 bg-red-500/10 rounded-full">
-                                <XCircle className="w-6 h-6 md:w-8 md:h-8 text-red-500" />
+                        </div>
+                        <Terminal className="w-5 h-5 md:w-6 md:h-6 text-zinc-700" />
+                    </div>
+
+                    {/* Receipt Content */}
+                    <div className="space-y-4 mb-8 bg-black/50 p-4 rounded border border-zinc-800 font-mono text-sm">
+                        <div className="flex justify-between items-center text-zinc-400">
+                            <span>SESSION ID:</span>
+                            <span className="text-zinc-500">#{gameState.turnCounter}-{Math.floor(Math.random() * 9999)}</span>
+                        </div>
+
+                        <div className="flex justify-between items-center text-zinc-400">
+                            <span>SCORE:</span>
+                            <span className="text-yellow-400 font-bold">{gameState.score}</span>
+                        </div>
+
+                        <div className="flex justify-between items-center text-zinc-400">
+                            <span>LEVEL SEED:</span>
+                            <span className="text-cyan-400">{currentSeed?.slice(0, 8)}...{currentSeed?.slice(-6)}</span>
+                        </div>
+
+                        <div className="flex justify-between items-center text-zinc-400">
+                            <span>DATA PACKETS:</span>
+                            <span className="text-white">{moveHistory.length * 5}</span>
+                        </div>
+
+                        <div className="h-px bg-zinc-800 my-2" />
+
+                        <div className="space-y-1">
+                            <span className="text-zinc-500 text-xs block mb-1">CRYPTOGRAPHIC PROOF</span>
+                            <div className="h-16 overflow-y-auto text-[10px] text-zinc-600 break-all bg-zinc-950 p-2 rounded border border-zinc-900 select-all font-mono scrollbar-thin scrollbar-track-zinc-900 scrollbar-thumb-zinc-700">
+                                {proofHash || "GENERATING..."}
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex flex-col gap-3 mb-4">
+                        {isVictory && onClaimVictory && (
+                            <button
+                                onClick={handleClaim}
+                                disabled={isClaiming}
+                                className="w-full flex items-center justify-center gap-2 px-4 py-3 md:px-6 md:py-4 rounded-lg font-bold transition-all border bg-yellow-500/10 border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/20 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
+                            >
+                                {isClaiming ? "VERIFYING..." : "CLAIM GLORY"}
+                            </button>
                         )}
-                        <div>
-                            <h2 className={cn(
-                                "text-lg md:text-xl font-bold tracking-wider",
-                                isVictory ? "text-green-400" : "text-red-500"
-                            )}>
-                                {isVictory ? "BREACH SUCCESSFUL" : "CONNECTION LOST"}
-                            </h2>
-                            <p className="text-zinc-500 text-xs">
-                                {isVictory ? "PAYLOAD DELIVERED" : "SIGNAL INTERRUPTED"}
-                            </p>
-                        </div>
-                    </div>
-                    <Terminal className="w-5 h-5 md:w-6 md:h-6 text-zinc-700" />
-                </div>
 
-                {/* Receipt Content */}
-                <div className="space-y-3 mb-6 bg-black/50 p-3 rounded border border-zinc-800 font-mono text-[10px] sm:text-sm overflow-hidden">
-                    <div className="flex justify-between items-center text-zinc-400 gap-2">
-                        <span className="shrink-0">SESSION ID:</span>
-                        <span className="text-zinc-500 truncate min-w-0">
-                            #{gameState.turnCounter}-{Math.floor(Math.random() * 9999)}
-                        </span>
-                    </div>
-
-                    <div className="flex justify-between items-center text-zinc-400 gap-2">
-                        <span className="shrink-0">SCORE:</span>
-                        <span className="text-yellow-400 font-bold">{gameState.score}</span>
-                    </div>
-
-                    <div className="flex justify-between items-center text-zinc-400 gap-2">
-                        <span className="shrink-0">LEVEL SEED:</span>
-                        <span className="text-cyan-400 truncate min-w-0">
-                            {currentSeed?.slice(0, 6)}...
-                        </span>
-                    </div>
-
-                    <div className="flex justify-between items-center text-zinc-400 gap-2">
-                        <span className="shrink-0">DATA PACKETS:</span>
-                        <span className="text-white">{moveHistory.length * 5}</span>
-                    </div>
-
-                    <div className="h-px bg-zinc-800 my-2" />
-
-                    <div className="space-y-1 overflow-hidden">
-                        <span className="text-zinc-500 text-[10px] sm:text-xs block">CRYPTOGRAPHIC PROOF</span>
-                        <div className="text-[8px] sm:text-[10px] text-zinc-600 break-all bg-zinc-950 p-2 rounded border border-zinc-900 select-all font-mono overflow-hidden">
-                            {proofHash || "GENERATING..."}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex flex-col gap-3">
-                    {isVictory && onClaimVictory && (
-                        <button
-                            onClick={handleClaim}
-                            disabled={isClaiming}
-                            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-lg font-bold transition-all border bg-yellow-500/10 border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {isClaiming ? "VERIFYING..." : "CLAIM GLORY"}
-                        </button>
-                    )}
-
-                    <div className="flex gap-4">
                         <button
                             onClick={onReset}
                             disabled={isClaiming}
                             className={cn(
-                                "flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-lg font-bold transition-all border",
+                                "w-full flex items-center justify-center gap-2 px-4 py-3 md:px-6 md:py-4 rounded-lg font-bold transition-all border text-sm md:text-base",
                                 isVictory
                                     ? "bg-zinc-800/50 border-zinc-700 text-zinc-400 hover:bg-zinc-800"
                                     : "bg-red-500/10 border-red-500/50 text-red-400 hover:bg-red-500/20"
@@ -145,18 +142,18 @@ export function BreachReport({ onReset, onClaimVictory }: BreachReportProps) {
                         >
                             {isVictory ? (
                                 <>
-                                    <RotateCcw className="w-5 h-5" />
+                                    <RotateCcw className="w-4 h-4 md:w-5 md:h-5" />
                                     NEW MISSION
                                 </>
                             ) : (
                                 <>
-                                    <WifiOff className="w-5 h-5" />
+                                    <WifiOff className="w-4 h-4 md:w-5 md:h-5" />
                                     RECONNECT SIGNAL
                                 </>
                             )}
                         </button>
                     </div>
-                </div>
+                </div>{/* End Scrollable Content Container */}
             </motion.div>
         </div>
     );

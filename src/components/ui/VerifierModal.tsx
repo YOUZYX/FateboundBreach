@@ -78,7 +78,7 @@ export function VerifierModal({ isOpen, onClose, currentSeed }: VerifierModalPro
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
                             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                            className="w-full max-w-4xl bg-zinc-900 border border-cyan-500/30 rounded-xl shadow-[0_0_60px_rgba(0,255,255,0.15)] overflow-hidden flex flex-col max-h-[85vh] pointer-events-auto"
+                            className="w-full max-w-4xl lg:max-w-4xl max-w-lg bg-zinc-900 border border-cyan-500/30 rounded-xl shadow-[0_0_60px_rgba(0,255,255,0.15)] overflow-hidden flex flex-col max-h-[90vh] pointer-events-auto"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Header */}
@@ -100,33 +100,33 @@ export function VerifierModal({ isOpen, onClose, currentSeed }: VerifierModalPro
                                 {/* Input Section */}
                                 <div className="space-y-2">
                                     <label className="text-xs font-mono text-zinc-500 uppercase">VRF Seed (Input)</label>
-                                    <div className="flex gap-2">
+                                    <div className="flex flex-col md:flex-row gap-2">
                                         <div className="flex-1">
                                             <input
                                                 type="text"
                                                 value={inputSeed}
                                                 onChange={(e) => handleSeedChange(e.target.value)}
                                                 placeholder="0x..."
-                                                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 font-mono text-sm text-green-400 focus:outline-none focus:border-green-500/50 transition-colors"
+                                                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 md:px-4 md:py-3 font-mono text-xs md:text-sm text-green-400 focus:outline-none focus:border-green-500/50 transition-colors truncate"
                                             />
                                         </div>
-                                        <div className="w-24">
+                                        <div className="flex gap-2">
                                             <input
                                                 type="number"
                                                 min={1}
                                                 value={targetTurn}
                                                 onChange={(e) => setTargetTurn(Math.max(1, parseInt(e.target.value) || 1))}
                                                 placeholder="Turn"
-                                                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 font-mono text-sm text-cyan-400 focus:outline-none focus:border-cyan-500/50 transition-colors text-center"
+                                                className="w-20 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 md:px-4 md:py-3 font-mono text-xs md:text-sm text-cyan-400 focus:outline-none focus:border-cyan-500/50 transition-colors text-center"
                                             />
+                                            <button
+                                                onClick={handleVerify}
+                                                disabled={!inputSeed}
+                                                className="px-4 md:px-6 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-white rounded-lg font-bold font-mono transition-colors text-sm"
+                                            >
+                                                VERIFY
+                                            </button>
                                         </div>
-                                        <button
-                                            onClick={handleVerify}
-                                            disabled={!inputSeed}
-                                            className="px-6 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-white rounded-lg font-bold font-mono transition-colors"
-                                        >
-                                            VERIFY
-                                        </button>
                                     </div>
                                     <p className="text-[10px] text-zinc-600 font-mono">
                                         Paste any game seed to deterministically reconstruct the level and hand.
@@ -146,10 +146,10 @@ export function VerifierModal({ isOpen, onClose, currentSeed }: VerifierModalPro
                                                 <Database className="w-4 h-4" />
                                                 Derived Hand (Turn {targetTurn})
                                             </div>
-                                            <div className="bg-zinc-950/50 rounded-lg p-4 border border-zinc-800 min-h-[200px]">
-                                                <div className="flex flex-wrap gap-2 justify-center">
+                                            <div className="bg-zinc-950/50 rounded-lg p-3 md:p-4 border border-zinc-800 min-h-[150px] md:min-h-[200px]">
+                                                <div className="flex flex-wrap gap-1 md:gap-2 justify-center">
                                                     {result.packets.map((p, i) => (
-                                                        <div key={i} className="scale-75 origin-top-left">
+                                                        <div key={i} className="scale-[0.6] md:scale-75 origin-top-left">
                                                             <PacketCard
                                                                 packet={p}
                                                                 index={i}
@@ -173,8 +173,8 @@ export function VerifierModal({ isOpen, onClose, currentSeed }: VerifierModalPro
                                                 <Grid3X3 className="w-4 h-4" />
                                                 Level Layout
                                             </div>
-                                            <div className="bg-zinc-950/50 rounded-lg p-4 border border-zinc-800 min-h-[200px] flex items-center justify-center">
-                                                <div className="grid grid-cols-6 gap-1">
+                                            <div className="bg-zinc-950/50 rounded-lg p-3 md:p-4 border border-zinc-800 min-h-[150px] md:min-h-[200px] flex items-center justify-center">
+                                                <div className="grid grid-cols-6 gap-0.5 md:gap-1">
                                                     {Array.from({ length: 36 }).map((_, i) => {
                                                         const x = i % 6;
                                                         const y = Math.floor(i / 6);
@@ -184,7 +184,7 @@ export function VerifierModal({ isOpen, onClose, currentSeed }: VerifierModalPro
                                                             <div
                                                                 key={i}
                                                                 className={cn(
-                                                                    "w-8 h-8 rounded border flex items-center justify-center text-[10px]",
+                                                                    "w-6 h-6 md:w-8 md:h-8 rounded border flex items-center justify-center text-[8px] md:text-[10px]",
                                                                     entity?.type === 'player' ? "border-cyan-500/50 bg-cyan-500/20 text-cyan-400" :
                                                                         entity?.type === 'enemy' ? "border-red-500/50 bg-red-500/20 text-red-400" :
                                                                             entity?.type === 'cache' ? "border-yellow-500/50 bg-yellow-500/20 text-yellow-400" :

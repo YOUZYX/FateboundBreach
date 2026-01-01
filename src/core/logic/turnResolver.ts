@@ -322,6 +322,18 @@ export function resolveTurn(
             if (e.hp > 0) e.hp = Math.max(0, e.hp - 5);
         });
 
+        // Award score for enemies killed by the storm
+        for (const enemy of nextState.enemies) {
+            // Since we already cleaned up dead enemies in step 4,
+            // anyone dead now was killed by the storm.
+            if (enemy.hp <= 0) {
+                nextState.score += 100;
+                if (enemy.type === 'CACHE_GOLD') {
+                    nextState.score += 1000;
+                }
+            }
+        }
+
         // Cleanup enemies killed by storm
         removeDeadEnemies(nextState);
     }

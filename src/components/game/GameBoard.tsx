@@ -103,16 +103,16 @@ export function GameBoard() {
     };
 
     return (
-        <div className="flex flex-col items-center gap-4 relative">
+        <div className="w-full max-w-[500px] aspect-square flex flex-col items-center gap-2 md:gap-4 relative mx-auto">
             {/* Grid Header */}
-            <div className="flex items-center justify-between w-full max-w-xl">
+            <div className="flex items-center justify-between w-full px-2">
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-zinc-500">NODE GRID</span>
-                    <span className="text-xs font-mono text-cyan-400">
+                    <span className="text-[10px] md:text-xs font-mono text-zinc-500">GRID</span>
+                    <span className="text-[10px] md:text-xs font-mono text-cyan-400">
                         {grid.width}x{grid.height}
                     </span>
                 </div>
-                <div className="flex items-center gap-4 text-xs font-mono">
+                <div className="flex items-center gap-3 text-[10px] md:text-xs font-mono">
                     <span className="text-zinc-400">
                         HP: <span className={cn(
                             player.hp > 50 ? "text-green-400" : player.hp > 25 ? "text-yellow-400" : "text-red-400"
@@ -120,7 +120,7 @@ export function GameBoard() {
                     </span>
                     {player.shield > 0 && (
                         <span className="text-zinc-400">
-                            SHIELD: <span className="text-blue-400">{player.shield}</span>
+                            SHD: <span className="text-blue-400">{player.shield}</span>
                         </span>
                     )}
                 </div>
@@ -546,7 +546,7 @@ function GameResultOverlay({
                 initial={{ scale: 0.5, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className="flex flex-col items-center gap-6 p-8"
+                className="flex flex-col items-center gap-4 md:gap-6 p-4 md:p-8"
             >
                 {/* Icon */}
                 <motion.div
@@ -556,26 +556,26 @@ function GameResultOverlay({
                     }}
                     transition={{ repeat: Infinity, duration: 2 }}
                     className={cn(
-                        "w-20 h-20 rounded-full flex items-center justify-center",
+                        "w-12 h-12 md:w-20 md:h-20 rounded-full flex items-center justify-center",
                         isVictory ? "bg-green-500/20 border-2 border-green-500" : "bg-red-500/20 border-2 border-red-500"
                     )}
                 >
                     {isVictory ? (
-                        <Trophy className="w-10 h-10 text-green-400" />
+                        <Trophy className="w-6 h-6 md:w-10 md:h-10 text-green-400" />
                     ) : (
-                        <Skull className="w-10 h-10 text-red-400" />
+                        <Skull className="w-6 h-6 md:w-10 md:h-10 text-red-400" />
                     )}
                 </motion.div>
 
                 {/* Text */}
                 <div className="text-center">
                     <h2 className={cn(
-                        "text-3xl font-bold tracking-wider",
+                        "text-xl md:text-3xl font-bold tracking-wider",
                         isVictory ? "text-green-400" : "text-red-400"
                     )}>
                         {isVictory ? 'BREACH SUCCESSFUL' : 'CONNECTION LOST'}
                     </h2>
-                    <p className="text-zinc-500 font-mono text-sm mt-2">
+                    <p className="text-zinc-500 font-mono text-xs md:text-sm mt-2">
                         {isVictory
                             ? 'All hostile nodes eliminated.'
                             : 'System integrity compromised.'}
@@ -586,7 +586,7 @@ function GameResultOverlay({
                 <motion.button
                     onClick={onReset}
                     className={cn(
-                        "px-6 py-3 rounded-lg font-mono text-sm transition-all",
+                        "px-4 py-2 md:px-6 md:py-3 rounded-lg font-mono text-xs md:text-sm transition-all",
                         isVictory
                             ? "bg-green-500 text-zinc-900 hover:bg-green-400"
                             : "bg-red-500 text-zinc-900 hover:bg-red-400"

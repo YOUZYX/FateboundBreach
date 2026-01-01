@@ -48,32 +48,33 @@ export function DataStream() {
             </div>
 
             {/* Packet Cards */}
-            <div className="flex items-center justify-center gap-3 overflow-x-auto py-4 px-2">
+            <div className="flex items-center gap-3 overflow-x-auto snap-x py-4 px-2 scrollbar-thin scrollbar-track-zinc-900 scrollbar-thumb-zinc-700">
                 {packetQueue.map((packet, index) => {
                     const isSelected = selectedPacketIds.includes(packet.id);
                     const isHovered = hoveredPacketId === packet.id;
                     const isAssigned = assignedPacketIds.has(packet.id);
 
                     return (
-                        <PacketCard
-                            key={packet.id}
-                            index={index}
-                            packet={packet}
-                            isSelected={isSelected}
-                            isHovered={isHovered}
-                            isAssigned={isAssigned}
-                            onClick={(e: React.MouseEvent) => {
-                                // Standard behavior: Shift to toggle, Click to select single
-                                const isMulti = e.shiftKey || e.ctrlKey || e.metaKey;
-                                selectPacket(packet.id, isMulti);
-                            }}
-                            onCheckboxClick={() => {
-                                // Checkbox behavior: ALWAYS Multi-select (toggle)
-                                selectPacket(packet.id, true);
-                            }}
-                            onHoverStart={() => hoverPacket(packet.id)}
-                            onHoverEnd={() => hoverPacket(null)}
-                        />
+                        <div key={packet.id} className="min-w-[100px] snap-center">
+                            <PacketCard
+                                index={index}
+                                packet={packet}
+                                isSelected={isSelected}
+                                isHovered={isHovered}
+                                isAssigned={isAssigned}
+                                onClick={(e: React.MouseEvent) => {
+                                    // Standard behavior: Shift to toggle, Click to select single
+                                    const isMulti = e.shiftKey || e.ctrlKey || e.metaKey;
+                                    selectPacket(packet.id, isMulti);
+                                }}
+                                onCheckboxClick={() => {
+                                    // Checkbox behavior: ALWAYS Multi-select (toggle)
+                                    selectPacket(packet.id, true);
+                                }}
+                                onHoverStart={() => hoverPacket(packet.id)}
+                                onHoverEnd={() => hoverPacket(null)}
+                            />
+                        </div>
                     );
                 })}
             </div>

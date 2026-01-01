@@ -137,17 +137,17 @@ export function GameLayout() {
                     <div className="flex items-center gap-4">
                         {gameState && (
                             <>
-                                <div className="flex items-center gap-4 text-xs font-mono">
+                                <div className="flex flex-wrap items-center gap-2 md:gap-4 text-[10px] md:text-xs font-mono">
                                     <span className="text-zinc-500">
                                         TURN: <span className="text-cyan-400">{gameState.turnCounter}</span>
                                     </span>
-                                    <span className="text-zinc-500">
+                                    <span className="text-center text-zinc-500 px-2 border-l border-zinc-800">
                                         LEVEL: <span className="text-cyan-400">{gameState.levelId}</span>
                                     </span>
                                     {isExecuting && (
-                                        <span className="flex items-center gap-1 text-yellow-400">
+                                        <span className="flex items-center gap-1 text-yellow-400 border-l border-zinc-800 pl-2">
                                             <Loader2 className="w-3 h-3 animate-spin" />
-                                            EXECUTING
+                                            <span className="hidden md:inline">EXECUTING</span>
                                         </span>
                                     )}
                                 </div>
@@ -234,8 +234,8 @@ export function GameLayout() {
             </AnimatePresence>
 
             {/* Main Content */}
-            <main className="flex-1 p-4">
-                <div className="max-w-6xl mx-auto space-y-6">
+            <main className="flex-1 p-2 md:p-6 overflow-hidden">
+                <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-start justify-center gap-4 lg:gap-8">
                     {!gameState ? (
                         <StartScreen
                             authenticated={authenticated}
@@ -249,64 +249,68 @@ export function GameLayout() {
                         />
                     ) : (
                         <>
-                            {/* Game Grid */}
-                            <GameBoard />
+                            {/* Left Column: Game Grid */}
+                            <div className="w-full lg:flex-1 flex justify-center">
+                                <GameBoard />
+                            </div>
 
-                            {/* Data Stream */}
-                            <DataStream />
+                            {/* Right Column: Console & Controls */}
+                            <div className="w-full lg:w-[480px] flex flex-col gap-4">
+                                <DataStream />
 
-                            {/* Action Buttons */}
-                            <AnimatePresence mode="wait">
-                                {gameResult === null && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        className="flex items-center justify-center gap-4"
-                                    >
-                                        <motion.button
-                                            onClick={executeTurn}
-                                            disabled={!canExecute}
-                                            className={cn(
-                                                "flex items-center gap-2 px-6 py-3 rounded-lg font-mono text-sm transition-all",
-                                                canExecute
-                                                    ? "bg-cyan-500 text-zinc-900 hover:bg-cyan-400"
-                                                    : "bg-zinc-800 text-zinc-500 cursor-not-allowed"
-                                            )}
-                                            whileHover={canExecute ? { scale: 1.05 } : {}}
-                                            whileTap={canExecute ? { scale: 0.95 } : {}}
+                                {/* Action Buttons */}
+                                <AnimatePresence mode="wait">
+                                    {gameResult === null && (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="grid grid-cols-2 gap-3"
                                         >
-                                            {isExecuting ? (
-                                                <>
-                                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                                    EXECUTING...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Play className="w-4 h-4" />
-                                                    EXECUTE SEQUENCE
-                                                </>
-                                            )}
-                                        </motion.button>
+                                            <motion.button
+                                                onClick={executeTurn}
+                                                disabled={!canExecute}
+                                                className={cn(
+                                                    "flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-mono text-sm transition-all",
+                                                    canExecute
+                                                        ? "bg-cyan-500 text-zinc-900 hover:bg-cyan-400 shadow-lg shadow-cyan-500/20"
+                                                        : "bg-zinc-800 text-zinc-500 cursor-not-allowed"
+                                                )}
+                                                whileHover={canExecute ? { scale: 1.02 } : {}}
+                                                whileTap={canExecute ? { scale: 0.98 } : {}}
+                                            >
+                                                {isExecuting ? (
+                                                    <>
+                                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                                        <span>Processing...</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Play className="w-4 h-4" />
+                                                        <span>EXECUTE</span>
+                                                    </>
+                                                )}
+                                            </motion.button>
 
-                                        <motion.button
-                                            onClick={resetGame}
-                                            disabled={isExecuting}
-                                            className={cn(
-                                                "flex items-center gap-2 px-4 py-3 rounded-lg font-mono text-sm border transition-all",
-                                                isExecuting
-                                                    ? "border-zinc-800 text-zinc-600 cursor-not-allowed"
-                                                    : "border-zinc-700 text-zinc-400 hover:bg-zinc-800"
-                                            )}
-                                            whileHover={!isExecuting ? { scale: 1.05 } : {}}
-                                            whileTap={!isExecuting ? { scale: 0.95 } : {}}
-                                        >
-                                            <RotateCcw className="w-4 h-4" />
-                                            ABORT
-                                        </motion.button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+                                            <motion.button
+                                                onClick={resetGame}
+                                                disabled={isExecuting}
+                                                className={cn(
+                                                    "flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-mono text-sm border transition-all",
+                                                    isExecuting
+                                                        ? "border-zinc-800 text-zinc-600 cursor-not-allowed"
+                                                        : "border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                                                )}
+                                                whileHover={!isExecuting ? { scale: 1.02 } : {}}
+                                                whileTap={!isExecuting ? { scale: 0.98 } : {}}
+                                            >
+                                                <RotateCcw className="w-4 h-4" />
+                                                <span>ABORT</span>
+                                            </motion.button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
 
                             {/* Progress Indicator */}
                             {!isExecuting && gameResult === null && (

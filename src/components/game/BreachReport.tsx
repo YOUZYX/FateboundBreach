@@ -49,7 +49,7 @@ export function BreachReport({ onReset, onClaimVictory }: BreachReportProps) {
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 className={cn(
-                    "w-full max-w-lg p-6 rounded-lg border-2 shadow-2xl font-mono",
+                    "w-[95%] max-w-lg p-4 md:p-6 rounded-lg border-2 shadow-2xl font-mono overflow-hidden",
                     isVictory
                         ? "bg-zinc-900/90 border-green-500/50 shadow-green-500/10"
                         : "bg-zinc-900/90 border-red-500/50 shadow-red-500/10"
@@ -62,16 +62,16 @@ export function BreachReport({ onReset, onClaimVictory }: BreachReportProps) {
                     <div className="flex items-center gap-3">
                         {isVictory ? (
                             <div className="p-2 bg-green-500/10 rounded-full">
-                                <CheckCircle className="w-8 h-8 text-green-400" />
+                                <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-400" />
                             </div>
                         ) : (
                             <div className="p-2 bg-red-500/10 rounded-full">
-                                <XCircle className="w-8 h-8 text-red-500" />
+                                <XCircle className="w-6 h-6 md:w-8 md:h-8 text-red-500" />
                             </div>
                         )}
                         <div>
                             <h2 className={cn(
-                                "text-xl font-bold tracking-wider",
+                                "text-lg md:text-xl font-bold tracking-wider",
                                 isVictory ? "text-green-400" : "text-red-500"
                             )}>
                                 {isVictory ? "BREACH SUCCESSFUL" : "CONNECTION LOST"}
@@ -81,36 +81,40 @@ export function BreachReport({ onReset, onClaimVictory }: BreachReportProps) {
                             </p>
                         </div>
                     </div>
-                    <Terminal className="w-6 h-6 text-zinc-700" />
+                    <Terminal className="w-5 h-5 md:w-6 md:h-6 text-zinc-700" />
                 </div>
 
                 {/* Receipt Content */}
-                <div className="space-y-4 mb-8 bg-black/50 p-4 rounded border border-zinc-800 font-mono text-sm">
-                    <div className="flex justify-between items-center text-zinc-400">
-                        <span>SESSION ID:</span>
-                        <span className="text-zinc-500">#{gameState.turnCounter}-{Math.floor(Math.random() * 9999)}</span>
+                <div className="space-y-3 mb-6 bg-black/50 p-3 rounded border border-zinc-800 font-mono text-[10px] sm:text-sm overflow-hidden">
+                    <div className="flex justify-between items-center text-zinc-400 gap-2">
+                        <span className="shrink-0">SESSION ID:</span>
+                        <span className="text-zinc-500 truncate min-w-0">
+                            #{gameState.turnCounter}-{Math.floor(Math.random() * 9999)}
+                        </span>
                     </div>
 
-                    <div className="flex justify-between items-center text-zinc-400">
-                        <span>SCORE:</span>
+                    <div className="flex justify-between items-center text-zinc-400 gap-2">
+                        <span className="shrink-0">SCORE:</span>
                         <span className="text-yellow-400 font-bold">{gameState.score}</span>
                     </div>
 
-                    <div className="flex justify-between items-center text-zinc-400">
-                        <span>LEVEL SEED:</span>
-                        <span className="text-cyan-400">{currentSeed?.slice(0, 8)}...{currentSeed?.slice(-6)}</span>
+                    <div className="flex justify-between items-center text-zinc-400 gap-2">
+                        <span className="shrink-0">LEVEL SEED:</span>
+                        <span className="text-cyan-400 truncate min-w-0">
+                            {currentSeed?.slice(0, 6)}...
+                        </span>
                     </div>
 
-                    <div className="flex justify-between items-center text-zinc-400">
-                        <span>DATA PACKETS:</span>
+                    <div className="flex justify-between items-center text-zinc-400 gap-2">
+                        <span className="shrink-0">DATA PACKETS:</span>
                         <span className="text-white">{moveHistory.length * 5}</span>
                     </div>
 
                     <div className="h-px bg-zinc-800 my-2" />
 
-                    <div className="space-y-1">
-                        <span className="text-zinc-500 text-xs block mb-1">CRYPTOGRAPHIC PROOF</span>
-                        <div className="text-[10px] sm:text-xs text-zinc-600 break-all bg-zinc-950 p-2 rounded border border-zinc-900 select-all font-mono">
+                    <div className="space-y-1 overflow-hidden">
+                        <span className="text-zinc-500 text-[10px] sm:text-xs block">CRYPTOGRAPHIC PROOF</span>
+                        <div className="text-[8px] sm:text-[10px] text-zinc-600 break-all bg-zinc-950 p-2 rounded border border-zinc-900 select-all font-mono overflow-hidden">
                             {proofHash || "GENERATING..."}
                         </div>
                     </div>

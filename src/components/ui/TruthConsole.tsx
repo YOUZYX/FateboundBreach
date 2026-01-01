@@ -115,7 +115,7 @@ export function TruthConsole() {
                                         <span className="text-xs text-zinc-500 uppercase tracking-wider">
                                             DERIVED TURN {gameState?.turnCounter || 1} HASH
                                         </span>
-                                        <span className="text-[10px] text-zinc-600 font-mono">
+                                        <span className="text-[10px] text-zinc-600 font-mono truncate max-w-[200px] md:max-w-none">
                                             Keccak256(LevelSeed + "Turn{gameState?.turnCounter}")
                                         </span>
                                     </div>
@@ -175,7 +175,8 @@ export function TruthConsole() {
                                                     className={cn(
                                                         "px-0.5 py-0.5 rounded transition-all",
                                                         colorClass,
-                                                        isActiveCard && !isHovered && "cursor-pointer hover:bg-zinc-800"
+                                                        isActiveCard && !isHovered && "cursor-pointer hover:bg-zinc-800",
+                                                        index >= 16 && "hidden md:inline-block"
                                                     )}
                                                     animate={isHovered ? { scale: 1.15 } : { scale: 1 }}
                                                 >

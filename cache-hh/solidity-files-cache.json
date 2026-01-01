@@ -1,0 +1,117 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "C:\\Users\\youne\\OneDrive\\Bureau\\Monadev\\MissionX\\game\\contracts\\FateboundCore.sol": {
+      "lastModificationDate": 1766991476009,
+      "contentHash": "0acecef5ee30e1c8f9c26a86160bccfe",
+      "sourceName": "contracts/FateboundCore.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./TurnVerifier.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "FateboundCore",
+        "IEntropyConsumer",
+        "IEntropyV2"
+      ]
+    },
+    "C:\\Users\\youne\\OneDrive\\Bureau\\Monadev\\MissionX\\game\\contracts\\TurnVerifier.sol": {
+      "lastModificationDate": 1766991420351,
+      "contentHash": "e8985dab3484023b55e84e11914690bc",
+      "sourceName": "contracts/TurnVerifier.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "TurnVerifier"
+      ]
+    },
+    "C:\\Users\\youne\\OneDrive\\Bureau\\Monadev\\MissionX\\game\\contracts\\MockVRF.sol": {
+      "lastModificationDate": 1766450041947,
+      "contentHash": "48a912b249611128e8b49eee03bebcb1",
+      "sourceName": "contracts/MockVRF.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "MockVRF"
+      ]
+    }
+  }
+}

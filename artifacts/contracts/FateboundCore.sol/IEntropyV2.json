@@ -1,0 +1,37 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IEntropyV2",
+  "sourceName": "contracts/FateboundCore.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "getFeeV2",
+      "outputs": [
+        {
+          "internalType": "uint128",
+          "name": "fee",
+          "type": "uint128"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "requestV2",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "sequenceNumber",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

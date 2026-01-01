@@ -1,0 +1,13 @@
+{
+  "network": "monadTestnet",
+  "deployer": "0x73C978453ebAf65b243d1C42E86BfD8fd2Dff0DA",
+  "timestamp": "2025-12-29T07:04:57.041Z",
+  "contracts": {
+    "FateboundCore": "0x4A206fa22C740173420A99cac8bae3EBe637D047",
+    "PythEntropyV2": "0x825c0390f379C631f3Cf11A82a37D20BddF93c07"
+  },
+  "config": {
+    "VITE_CORE_ADDRESS": "0x4A206fa22C740173420A99cac8bae3EBe637D047",
+    "VITE_ENTROPY_ADDRESS": "0x825c0390f379C631f3Cf11A82a37D20BddF93c07"
+  }
+}

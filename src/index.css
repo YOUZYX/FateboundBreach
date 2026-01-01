@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   Fatebound Breach - Global Styles
+   ============================================================================ */
+
+:root {
+  /* Cyberpunk Color Palette */
+  --cyber-bg: #0d0d0d;
+  --cyber-cyan: #00f3ff;
+  --cyber-red: #ff2a2a;
+  --cyber-green: #00ff41;
+  --cyber-yellow: #ffee00;
+  --cyber-purple: #a855f7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Monaco, Consolas, monospace;
+  font-size: 16px;
+  line-height: 1.5;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--cyber-bg);
+  color: #e4e4e7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* ============================================================================
+   Custom Scrollbar
+   ============================================================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #18181b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
+
+/* ============================================================================
+   Animations
+   ============================================================================ */
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px var(--cyber-cyan);
+  }
+  50% {
+    box-shadow: 0 0 25px var(--cyber-cyan);
+  }
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(200%);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ============================================================================
+   Typography
+   ============================================================================ */
+
+.font-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Monaco, Consolas, monospace;
+}
+
+/* ============================================================================
+   Utility Classes
+   ============================================================================ */
+
+.text-glow-cyan {
+  text-shadow: 0 0 10px var(--cyber-cyan);
+}
+
+.text-glow-red {
+  text-shadow: 0 0 10px var(--cyber-red);
+}
+
+.text-glow-green {
+  text-shadow: 0 0 10px var(--cyber-green);
+}
+
+/* Grid pattern background */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}

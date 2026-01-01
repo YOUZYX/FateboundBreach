@@ -381,7 +381,7 @@ export function GameLayout() {
             {/* Footer */}
             <footer className="border-t border-zinc-800 px-4 py-2">
                 <div className="max-w-6xl mx-auto flex items-center justify-between text-xs font-mono text-zinc-600">
-                    <span>MISSION X HACKATHON 2024</span>
+                    <span>MISSION X</span>
                     <span>VERIFIABLY FAIR • PYTH VRF • MONAD TESTNET</span>
                 </div>
             </footer>

@@ -39,9 +39,14 @@ Experience a high-stakes cyber-warfare simulation where every move is recorded o
 3.  **Environment Configuration:**
     Create a `.env` file in the `game` directory:
     ```env
+    MONAD_RPC_URL="https://testnet-rpc.monad.xyz"
     VITE_PRIVY_APP_ID=your_privy_app_id
     VITE_SUPABASE_URL=your_supabase_url
     VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+    VITE_CORE_ADDRESS=xxxxxxxxxxxxxxxxxxxxxx
+    VITE_ENTROPY_ADDRESS=xxxxxxxxxxxxxxxxxxxxxx
+    VITE_PRIVY_APPID=xxxxxxxxxxxxxxxxxxxxxx
+    PRIVY_APPSECRET=xxxxxxxxxxxxxxxxxxxxxx
     ```
 
 4.  **Run the Game:**
@@ -59,4 +64,4 @@ Experience a high-stakes cyber-warfare simulation where every move is recorded o
 5.  **Claim Victory:** Win the round to mint your score to the blockchain and climb the ranks.
 
 ---
-*Built for the Monad Hackathon by the Fatebound Breach Team.*
+*Built for the Monad Hackathon by YOUZY.*

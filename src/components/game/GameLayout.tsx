@@ -6,7 +6,7 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { createWalletClient, custom } from 'viem';
 import { TruthConsole } from '../ui/TruthConsole';
@@ -25,7 +25,7 @@ import {
     useOnChainError,
     useTxHash,
 } from '../../store/gameStore';
-import { Play, RotateCcw, Zap, Loader2, Wallet, ExternalLink, TriangleAlert, Database, Gem, HelpCircle, Trophy } from 'lucide-react';
+import { Play, RotateCcw, Zap, Loader2, Wallet, ExternalLink, TriangleAlert, Database, Gem, HelpCircle, Trophy, Copy, Check } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { monadTestnet } from '../../contracts/config';
 
@@ -35,6 +35,22 @@ export function GameLayout() {
     const [showDisconnectModal, setShowDisconnectModal] = useState(false);
     const [showHowToPlay, setShowHowToPlay] = useState(false); // New
     const [showLeaderboard, setShowLeaderboard] = useState(false); // New
+    const [isWalletCopied, setIsWalletCopied] = useState(false);
+
+    // Copy wallet address handler
+    const handleCopyWallet = useCallback(async (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevent disconnect modal from opening
+        const address = user?.wallet?.address;
+        if (address) {
+            try {
+                await navigator.clipboard.writeText(address);
+                setIsWalletCopied(true);
+                setTimeout(() => setIsWalletCopied(false), 2000);
+            } catch (err) {
+                console.error('Failed to copy wallet address:', err);
+            }
+        }
+    }, [user?.wallet?.address]);
 
     const gameState = useGameStore((s) => s.gameState);
     const packetQueue = useGameStore((s) => s.packetQueue);
@@ -192,13 +208,39 @@ export function GameLayout() {
 
                         {/* Wallet Connection Status */}
                         {authenticated ? (
-                            <button
-                                onClick={() => setShowDisconnectModal(true)}
-                                className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs font-mono text-zinc-400 hover:text-white hover:border-zinc-600 transition-all"
-                            >
-                                <Wallet className="w-3 h-3 text-green-400" />
-                                {user?.wallet?.address?.slice(0, 6)}...{user?.wallet?.address?.slice(-4)}
-                            </button>
+                            <div className="flex items-center gap-1">
+                                <button
+                                    onClick={() => setShowDisconnectModal(true)}
+                                    className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-l text-xs font-mono text-zinc-400 hover:text-white hover:border-zinc-600 transition-all"
+                                >
+                                    <Wallet className="w-3 h-3 text-green-400" />
+                                    {user?.wallet?.address?.slice(0, 6)}...{user?.wallet?.address?.slice(-4)}
+                                </button>
+                                <motion.button
+                                    onClick={handleCopyWallet}
+                                    className={cn(
+                                        "flex items-center justify-center p-1.5 border rounded-r text-xs transition-all",
+                                        isWalletCopied
+                                            ? "bg-green-500/20 border-green-500/50 text-green-400"
+                                            : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-600"
+                                    )}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    title="Copy wallet address"
+                                >
+                                    {isWalletCopied ? (
+                                        <motion.div
+                                            initial={{ scale: 0, rotate: -180 }}
+                                            animate={{ scale: 1, rotate: 0 }}
+                                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                        >
+                                            <Check className="w-3 h-3" />
+                                        </motion.div>
+                                    ) : (
+                                        <Copy className="w-3 h-3" />
+                                    )}
+                                </motion.button>
+                            </div>
                         ) : (
                             <button
                                 onClick={login}
@@ -332,6 +374,7 @@ export function GameLayout() {
                     )}
                 </div>
                 <BreachReport
+                    walletAddress={user?.wallet?.address}
                     onClaimVictory={async () => {
                         if (authenticated && wallets.length > 0) {
                             try {

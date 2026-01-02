@@ -374,7 +374,6 @@ export function GameLayout() {
                     )}
                 </div>
                 <BreachReport
-                    walletAddress={user?.wallet?.address}
                     onClaimVictory={async () => {
                         if (authenticated && wallets.length > 0) {
                             try {

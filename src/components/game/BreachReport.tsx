@@ -1,17 +1,16 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '../../store/gameStore';
 import { keccak256, stringToBytes } from 'viem';
-import { RotateCcw, CheckCircle, XCircle, Terminal, WifiOff, Copy, Check } from 'lucide-react';
+import { RotateCcw, CheckCircle, XCircle, Terminal, WifiOff } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 
 interface BreachReportProps {
     onReset: () => void;
     onClaimVictory?: () => void;
-    walletAddress?: string;
 }
 
-export function BreachReport({ onReset, onClaimVictory, walletAddress }: BreachReportProps) {
+export function BreachReport({ onReset, onClaimVictory }: BreachReportProps) {
     const gameResult = useGameStore((s) => s.gameResult);
     const gameState = useGameStore((s) => s.gameState);
     const currentSeed = useGameStore((s) => s.currentLevelSeed);
@@ -19,7 +18,6 @@ export function BreachReport({ onReset, onClaimVictory, walletAddress }: BreachR
 
     const [proofHash, setProofHash] = useState<string>('');
     const [isClaiming, setIsClaiming] = useState(false);
-    const [isCopied, setIsCopied] = useState(false);
 
     useEffect(() => {
         if (gameResult && currentSeed) {
@@ -44,18 +42,6 @@ export function BreachReport({ onReset, onClaimVictory, walletAddress }: BreachR
             }
         }
     };
-
-    const handleCopyWallet = useCallback(async () => {
-        if (walletAddress) {
-            try {
-                await navigator.clipboard.writeText(walletAddress);
-                setIsCopied(true);
-                setTimeout(() => setIsCopied(false), 2000);
-            } catch (err) {
-                console.error('Failed to copy wallet address:', err);
-            }
-        }
-    }, [walletAddress]);
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
@@ -131,49 +117,6 @@ export function BreachReport({ onReset, onClaimVictory, walletAddress }: BreachR
                             </div>
                         </div>
                     </div>
-
-                    {/* Copy Wallet Address Section */}
-                    {walletAddress && (
-                        <div className="mb-6">
-                            <div className="flex items-center justify-between bg-black/50 p-3 rounded border border-zinc-800">
-                                <div className="flex flex-col">
-                                    <span className="text-zinc-500 text-xs mb-1">OPERATOR WALLET</span>
-                                    <span className="text-cyan-400 font-mono text-xs md:text-sm">
-                                        {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-                                    </span>
-                                </div>
-                                <motion.button
-                                    onClick={handleCopyWallet}
-                                    className={cn(
-                                        "flex items-center gap-2 px-3 py-2 rounded-lg font-mono text-xs transition-all border",
-                                        isCopied
-                                            ? "bg-green-500/20 border-green-500/50 text-green-400"
-                                            : "bg-zinc-800/50 border-zinc-700 text-zinc-400 hover:bg-zinc-700 hover:text-white"
-                                    )}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                >
-                                    {isCopied ? (
-                                        <>
-                                            <motion.div
-                                                initial={{ scale: 0, rotate: -180 }}
-                                                animate={{ scale: 1, rotate: 0 }}
-                                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                            >
-                                                <Check className="w-4 h-4" />
-                                            </motion.div>
-                                            <span>COPIED!</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Copy className="w-4 h-4" />
-                                            <span>COPY</span>
-                                        </>
-                                    )}
-                                </motion.button>
-                            </div>
-                        </div>
-                    )}
 
                     {/* Actions */}
                     <div className="flex flex-col gap-3 mb-4">

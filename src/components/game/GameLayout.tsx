@@ -16,6 +16,7 @@ import { BreachReport } from './BreachReport';
 import { DisconnectModal } from '../ui/DisconnectModal';
 import { HowToPlay } from '../ui/HowToPlay'; // New
 import { Leaderboard } from '../ui/Leaderboard'; // New
+import { VerifierModal } from '../ui/VerifierModal'; // New
 import {
     useGameStore,
     usePendingAssignments,
@@ -35,7 +36,16 @@ export function GameLayout() {
     const [showDisconnectModal, setShowDisconnectModal] = useState(false);
     const [showHowToPlay, setShowHowToPlay] = useState(false); // New
     const [showLeaderboard, setShowLeaderboard] = useState(false); // New
+    const [showVerifier, setShowVerifier] = useState(false); // New
     const [isWalletCopied, setIsWalletCopied] = useState(false);
+
+    // Auto-show tutorial on first visit
+    useEffect(() => {
+        const isTutorialHidden = localStorage.getItem('missionx_hide_tutorial');
+        if (!isTutorialHidden) {
+            setShowHowToPlay(true);
+        }
+    }, []);
 
     // Copy wallet address handler
     const handleCopyWallet = useCallback(async (e: React.MouseEvent) => {
@@ -203,6 +213,13 @@ export function GameLayout() {
                                 title="Leaderboard"
                             >
                                 <Trophy className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={() => setShowVerifier(true)}
+                                className="p-1.5 rounded-full bg-zinc-800 text-zinc-400 hover:text-green-400 hover:bg-zinc-700 transition-colors"
+                                title="Verify Fairness"
+                            >
+                                <Check className="w-5 h-5" />
                             </button>
                         </div>
 
@@ -422,6 +439,7 @@ export function GameLayout() {
                 />
                 <HowToPlay isOpen={showHowToPlay} onClose={() => setShowHowToPlay(false)} />
                 <Leaderboard isOpen={showLeaderboard} onClose={() => setShowLeaderboard(false)} />
+                <VerifierModal isOpen={showVerifier} onClose={() => setShowVerifier(false)} currentSeed={gameState?.levelSeed} />
             </main>
 
             {/* Footer */}

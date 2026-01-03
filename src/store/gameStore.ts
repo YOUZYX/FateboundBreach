@@ -155,22 +155,7 @@ function canAssignPacketToTarget(
 // ============================================================================
 
 
-function updateEnemyIntents(enemies: Enemy[], turnCounter: number): Enemy[] {
-    return enemies.map((enemy, index) => {
-        const pattern = (turnCounter + index) % 3;
-        let intent: Enemy['intent'] = 'ATTACK';
 
-        if (pattern === 0) {
-            intent = 'ATTACK';
-        } else if (pattern === 1) {
-            intent = enemy.type === 'sentinel' ? 'DEFEND' : 'ATTACK';
-        } else {
-            intent = 'IDLE';
-        }
-
-        return { ...enemy, intent };
-    });
-}
 
 // ============================================================================
 // Store Implementation
@@ -811,12 +796,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 const nextState = resolveTurn(gameState, pendingAssignments);
                 const result = checkTurnResult(nextState);
 
-                if (result === 'CONTINUE') {
-                    nextState.enemies = updateEnemyIntents(
-                        nextState.enemies,
-                        nextState.turnCounter
-                    );
-                }
+
 
                 set({
                     gameState: nextState,

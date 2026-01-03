@@ -132,6 +132,7 @@ export function TruthConsole() {
                                         <div><span className="text-yellow-400 font-bold">GOLD</span> = LEGENDARY</div>
                                         <div><span className="text-red-500 font-bold">RED</span> = ANOMALY</div>
                                         <div><span className="text-pink-500 font-bold">PINK</span> = JACKPOT</div>
+                                        <div><span className="text-green-400 font-bold">GREEN</span> = MOVEMENT</div>
                                     </div>
                                     <div className="flex flex-wrap gap-0.5 font-mono text-sm leading-relaxed">
                                         <span className="text-cyan-500 font-bold">0x</span>
@@ -153,6 +154,8 @@ export function TruthConsole() {
                                                 colorClass = "text-red-500 font-bold animate-pulse"; // Anomaly
                                             } else if (index === 31) {
                                                 colorClass = "text-pink-500 font-bold animate-pulse"; // Jackpot
+                                            } else if (index >= 20 && index <= 25) {
+                                                colorClass = "text-green-400 font-bold"; // Movement
                                             } else if (isActiveCard) {
                                                 if (isHovered) {
                                                     colorClass = "bg-cyan-400 text-zinc-900 font-bold scale-110 shadow-[0_0_15px_rgba(0,255,255,0.6)]";

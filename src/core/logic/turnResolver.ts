@@ -16,6 +16,7 @@ import type {
     Packet,
     TurnResult,
 } from '../types/gameState';
+import { deriveTurnSeed, hexToBytes } from './vrfMapper';
 
 // ============================================================================
 // Deep Clone Utility
@@ -27,6 +28,136 @@ import type {
  */
 function cloneState(state: GameState): GameState {
     return JSON.parse(JSON.stringify(state));
+}
+
+// ============================================================================
+// Utility: Positioning
+// ============================================================================
+
+function calculateDistance(pos1: { x: number; y: number }, pos2: { x: number; y: number }): number {
+    return Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y);
+}
+
+// ============================================================================
+// AI Logic: Movement & Intent
+// ============================================================================
+
+/**
+ * Moves enemies deterministically based on the turn seed.
+ */
+function moveEnemies(state: GameState): void {
+    const turnSeed = deriveTurnSeed(state.levelSeed, state.turnCounter);
+    const seedBytes = hexToBytes(turnSeed);
+
+    state.enemies.forEach((enemy, index) => {
+        // Skip dead enemies or stationary structures
+        if (enemy.hp <= 0 || enemy.type === 'FIREWALL' || enemy.type === 'CACHE_GOLD') return;
+
+        // Use a unique byte index for each enemy's movement
+        const moveByte = seedBytes[(20 + index) % seedBytes.length];
+
+        // Determine Direction
+        // 0-50: UP (y-1)
+        // 51-100: DOWN (y+1)
+        // 101-150: LEFT (x-1)
+        // 151-200: RIGHT (x+1)
+        // 201-255: STAY
+
+        let dx = 0;
+        let dy = 0;
+
+        if (moveByte <= 50) dy = -1;
+        else if (moveByte <= 100) dy = 1;
+        else if (moveByte <= 150) dx = -1;
+        else if (moveByte <= 200) dx = 1;
+        else return; // Stay
+
+        const newX = enemy.position.x + dx;
+        const newY = enemy.position.y + dy;
+
+        // Validation Checks
+        const isInsideGrid =
+            newX >= 0 && newX < state.grid.width &&
+            newY >= 0 && newY < state.grid.height;
+
+        if (!isInsideGrid) return;
+
+        const isCollidingWithPlayer =
+            state.player.position &&
+            newX === state.player.position.x &&
+            newY === state.player.position.y;
+
+        if (isCollidingWithPlayer) return;
+
+        const isCollidingWithEnemy = state.enemies.some(
+            (other) => other.hp > 0 && other.id !== enemy.id && other.position.x === newX && other.position.y === newY
+        );
+
+        if (isCollidingWithEnemy) return;
+
+        // Move confirmed
+        enemy.position = { x: newX, y: newY };
+    });
+}
+
+/**
+ * Updates enemy intents and damage for the NEXT turn.
+ * Implements Proximity Damage scaling.
+ */
+function updateEnemyThreats(state: GameState): void {
+    const turn = state.turnCounter; // This is the 'next' turn number already incremented or about to be? 
+    // Logic handles intents for the UPCOMING turn.
+
+    state.enemies.forEach((enemy, index) => {
+        if (enemy.hp <= 0) return;
+
+        // 1. Determine Base Damage & Pattern
+        // Default Pattern: Attack -> Special -> Idle
+        const patternStep = (turn + index) % 3;
+        let baseDamage = 10;
+        let intent: 'ATTACK' | 'DEFEND' | 'IDLE' | 'BUFF' = 'IDLE';
+
+        // Override logic by Enemy Type
+        if (enemy.type === 'DRONE') {
+            baseDamage = 5;
+            intent = 'ATTACK'; // Drones spam attack
+        } else if (enemy.type === 'SENTINEL') {
+            baseDamage = 15;
+            // Sentinel: Attack -> Defend -> Idle
+            if (patternStep === 0) intent = 'ATTACK';
+            else if (patternStep === 1) intent = 'DEFEND';
+            else intent = 'IDLE';
+        } else if (enemy.type === 'FIREWALL') {
+            baseDamage = 8;
+            intent = patternStep === 2 ? 'BUFF' : 'ATTACK';
+        } else if (enemy.type === 'CACHE_GOLD') {
+            // Passive
+            intent = 'IDLE';
+            baseDamage = 0;
+        } else {
+            // Default Fallback
+            if (patternStep === 0) intent = 'ATTACK';
+            else if (patternStep === 1) intent = 'ATTACK';
+            else intent = 'IDLE';
+        }
+
+        // 2. Proximity Scaling
+        if (state.player.position && intent === 'ATTACK') {
+            const dist = calculateDistance(enemy.position, state.player.position);
+
+            if (dist <= 1) {
+                // Point Blank: +50% Damage
+                baseDamage = Math.floor(baseDamage * 1.5);
+            } else if (dist > 3) {
+                // Long Range: -25% Damage
+                baseDamage = Math.floor(baseDamage * 0.75);
+            }
+        }
+
+        // 3. Update State
+        enemy.intent = intent;
+        enemy.damage = baseDamage;
+    });
 }
 
 // ============================================================================
@@ -249,7 +380,9 @@ export function checkTurnResult(state: GameState): TurnResult {
  * 1. Apply all player packet assignments
  * 2. Remove dead enemies
  * 3. Execute enemy phase (surviving enemies attack)
- * 4. Update turn counter and status
+ * 4. Move Enemies (Dynamic AI)
+ * 5. Update Turn Counter
+ * 6. Prepare Intents for Next Turn
  * 
  * @param currentState - The current game state
  * @param assignments - Array of packet-to-target assignments
@@ -266,7 +399,6 @@ export function resolveTurn(
     if (nextState.jackpotHit) {
         // Jackpot!
         nextState.score += 5000;
-        // Reset flag to avoid double counting if state persists (though it shouldn't)
         nextState.jackpotHit = false;
     }
 
@@ -286,13 +418,8 @@ export function resolveTurn(
         applyPacketEffect(nextState, packet, assignment.targetId);
     }
 
-    // 4. Calculate Score & Remove dead enemies
+    // 4. Calculate Score & Check for kills
     for (const enemy of nextState.enemies) {
-        // Check if enemy is dying (was alive 0, now <= 0)
-        // Wait, applyPacketEffect already modified nextState.enemies.
-        // We need to know if they died THIS TURN.
-        // We compare against currentState (which is immutable input).
-
         // Find original enemy state
         const originalEnemy = currentState.enemies.find(e => e.id === enemy.id);
 
@@ -309,7 +436,7 @@ export function resolveTurn(
     }
     removeDeadEnemies(nextState);
 
-    // 5. Execute enemy phase (surviving enemies attack)
+    // 5. Execute enemy phase (surviving enemies attack current intent)
     executeEnemyPhase(nextState);
 
     // 5.1 Apply End-of-Turn Anomalies
@@ -322,39 +449,34 @@ export function resolveTurn(
             if (e.hp > 0) e.hp = Math.max(0, e.hp - 5);
         });
 
-        // Award score for enemies killed by the storm
-        for (const enemy of nextState.enemies) {
-            // Since we already cleaned up dead enemies in step 4,
-            // anyone dead now was killed by the storm.
-            if (enemy.hp <= 0) {
-                nextState.score += 100;
-                if (enemy.type === 'CACHE_GOLD') {
-                    nextState.score += 1000;
-                }
-            }
-        }
-
         // Cleanup enemies killed by storm
         removeDeadEnemies(nextState);
     }
 
-    // 6. Clear assignments and data stream for next turn
+    // 6. Clear assignments for next turn
     nextState.assignments = [];
     nextState.dataStream = [];
 
-    // 7. Increment turn counter
+    // 7. Dynamic AI Movement 
+    // (Only if game is continuing)
+    if (checkTurnResult(nextState) === 'CONTINUE') {
+        moveEnemies(nextState);
+    }
+
+    // 8. Increment turn counter
     nextState.turnCounter += 1;
 
-    // 8. Update status based on result
+    // 9. Prepare Threats/Intents for the UPCOMING turn
+    if (checkTurnResult(nextState) === 'CONTINUE') {
+        updateEnemyThreats(nextState);
+    }
+
+    // 10. Update status based on result
     const result = checkTurnResult(nextState);
     if (result === 'VICTORY' || result === 'DEFEAT') {
         nextState.status = 'RESOLVED';
-
         if (result === 'VICTORY') {
-            // Completion Bonus: +500 Points
             nextState.score += 500;
-
-            // Flawless Bonus: +200 Points (If Player HP == MaxHP)
             if (nextState.player.hp === nextState.player.maxHp) {
                 nextState.score += 200;
             }
@@ -441,9 +563,15 @@ export function serializeStateForHash(state: GameState): string {
         player: {
             hp: state.player.hp,
             shield: state.player.shield,
+            // Include position in hash now relevant for replay
+            position: state.player.position,
         },
         enemies: state.enemies
-            .map((e) => ({ id: e.id, hp: e.hp }))
+            .map((e) => ({
+                id: e.id,
+                hp: e.hp,
+                position: e.position // Include position in hash
+            }))
             .sort((a, b) => a.id.localeCompare(b.id)),
     };
 

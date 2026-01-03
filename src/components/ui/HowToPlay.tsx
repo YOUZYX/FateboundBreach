@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronLeft, ChevronRight, Binary, ArrowRight, Shield, Zap, Swords, Heart, CheckCircle, ExternalLink, Move, TriangleAlert } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Binary, ArrowRight, Shield, Zap, Swords, Heart, CheckCircle, Move, TriangleAlert } from 'lucide-react';
 
 import { cn } from '../../lib/utils';
 import { createPortal } from 'react-dom';

@@ -91,8 +91,17 @@ interface GameStore {
     historyLog: HistoryEntry[];
     moveHistory: ActionLog[];
 
+
+    // === Audio State ===
+    isMuted: boolean;
+    masterVolume: number; // 0.0 to 1.0
+
     // === Actions ===
     startGame: (seed: string) => void;
+    toggleMute: () => void;
+    setMasterVolume: (volume: number) => void;
+
+
     initiateGameOnChain: (walletClient: WalletClient) => Promise<void>;
     checkActiveGame: (walletClient: WalletClient) => Promise<void>;
     forfeitGameOnChain: (walletClient: WalletClient) => Promise<void>;
@@ -182,6 +191,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
     pendingAssignments: [],
     historyLog: [],
     moveHistory: [],
+
+    // === Audio State ===
+    isMuted: false,
+    masterVolume: 0.3,
+
+    toggleMute: () => set((state) => ({ isMuted: !state.isMuted })),
+    setMasterVolume: (volume) => set({ masterVolume: volume }),
 
     // === On-Chain Actions ===
 

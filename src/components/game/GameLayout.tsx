@@ -26,7 +26,7 @@ import {
     useOnChainError,
     useTxHash,
 } from '../../store/gameStore';
-import { Play, RotateCcw, Zap, Loader2, Wallet, ExternalLink, TriangleAlert, Database, Gem, HelpCircle, Trophy, Copy, Check } from 'lucide-react';
+import { Play, RotateCcw, Zap, Loader2, Wallet, ExternalLink, TriangleAlert, Database, Gem, HelpCircle, Trophy, Copy, Check, Volume2, VolumeX } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { monadTestnet } from '../../contracts/config';
 
@@ -449,6 +449,54 @@ export function GameLayout() {
                     <span>VERIFIABLY FAIR • PYTH VRF • MONAD TESTNET</span>
                 </div>
             </footer>
+
+            {/* Sound Control Button */}
+            <SoundControl />
+        </div>
+    );
+}
+
+function SoundControl() {
+    const isMuted = useGameStore((s) => s.isMuted);
+    const toggleMute = useGameStore((s) => s.toggleMute);
+    const masterVolume = useGameStore((s) => s.masterVolume);
+    const setMasterVolume = useGameStore((s) => s.setMasterVolume);
+
+    return (
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2 group">
+            {/* Volume Slider Popup */}
+            <div className="mb-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out bg-zinc-900 border border-zinc-700 p-3 rounded-xl shadow-xl flex flex-col items-center gap-2">
+                <div className="h-24 w-6 flex items-center justify-center">
+                    <input
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.05"
+                        value={masterVolume}
+                        onChange={(e) => setMasterVolume(parseFloat(e.target.value))}
+                        className="w-24 h-1.5 bg-zinc-700 rounded-lg appearance-none cursor-pointer -rotate-90 origin-center accent-cyan-400 hover:accent-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
+                        style={{
+                            // Custom styles for webkit slider thumb if needed, but Tailwind accent works well
+                        }}
+                    />
+                </div>
+                <span className="text-[10px] font-mono text-zinc-400">
+                    {Math.round(masterVolume * 100)}%
+                </span>
+            </div>
+
+            {/* Mute Toggle Button */}
+            <button
+                onClick={toggleMute}
+                className="p-3 rounded-full bg-zinc-900 border border-zinc-700 text-zinc-400 hover:text-cyan-400 hover:border-cyan-500/50 hover:bg-zinc-800 shadow-xl transition-all relative"
+                title={isMuted ? "Unmute Audio" : "Mute Audio"}
+            >
+                {isMuted ? (
+                    <VolumeX className="w-6 h-6" />
+                ) : (
+                    <Volume2 className="w-6 h-6" />
+                )}
+            </button>
         </div>
     );
 }

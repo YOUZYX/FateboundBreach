@@ -141,9 +141,7 @@ export type GameStatus =
     | 'EXECUTING'       // Resolving turn
     | 'RESOLVED';       // Turn complete, checking conditions
 
-/**
- * Win/Loss/Continue condition after turn resolution.
- */
+// Revert back to string union to avoid breaking current store logic
 export type TurnResult = 'VICTORY' | 'DEFEAT' | 'CONTINUE';
 
 /**
